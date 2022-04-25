@@ -1,0 +1,24 @@
+Package: rotc
+Title: Functions to Access OTC Data
+Version: 0.0.0.9000
+Authors@R: 
+    person("Carl", "Sebastian", , "mrcaseb@gmail.com", role = c("aut", "cre"))
+Description: A set of functions to access over the cap data.
+License: MIT + file LICENSE
+Depends: 
+    R (>= 3.6)
+Imports: 
+    cli (>= 3.2.0),
+    dplyr (>= 1.0.8),
+    httr2 (>= 0.1.1),
+    janitor (>= 2.1.0),
+    purrr (>= 0.3.4),
+    readr (>= 2.1.2),
+    rlang (>= 1.0.2),
+    rvest (>= 1.0.2),
+    stringr (>= 1.4.0),
+    tidyr (>= 1.2.0),
+    xml2 (>= 1.3.3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
