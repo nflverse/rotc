@@ -61,7 +61,7 @@ otc_historical_contracts <- function(position = c("QB", "RB", "FB", "WR",
     tbl,
     class = c("nflverse_data","tbl_df","tbl","data.table","data.frame"),
     nflverse_timestamp = Sys.time(),
-    nflverse_type = "Over The Cap Historical Contract Data"
+    nflverse_type = "Historical Contract Data from OverTheCap.com"
   )
 }
 
