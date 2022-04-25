@@ -5,6 +5,8 @@ Authors@R:
     person("Carl", "Sebastian", , "mrcaseb@gmail.com", role = c("aut", "cre"))
 Description: A set of functions to access over the cap data.
 License: MIT + file LICENSE
+URL: https://github.com/nflverse/rotc
+BugReports: https://github.com/nflverse/rotc/issues
 Depends: 
     R (>= 3.6)
 Imports: 
@@ -22,5 +24,3 @@ Imports:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
-URL: https://github.com/nflverse/rotc
-BugReports: https://github.com/nflverse/rotc/issues

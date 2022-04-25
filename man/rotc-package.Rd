@@ -8,6 +8,14 @@
 \description{
 A set of functions to access over the cap data.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/nflverse/rotc}
+  \item Report bugs at \url{https://github.com/nflverse/rotc/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Carl Sebastian \email{mrcaseb@gmail.com}
 
