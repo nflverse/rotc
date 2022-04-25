@@ -57,9 +57,13 @@ otc_historical_contracts <- function(position = c("QB", "RB", "FB", "WR",
     dplyr::select(player, position, team, is_active, dplyr::everything()) %>%
     tidyr::replace_na(list(is_active = FALSE))
 
-  tbl
+  structure(
+    tbl,
+    class = c("nflverse_data","tbl_df","tbl","data.table","data.frame"),
+    nflverse_timestamp = Sys.time(),
+    nflverse_type = "Over The Cap Historical Contract Data"
+  )
 }
-
 
 #' Scrape Historical Contracts for Multiple Positions
 #'
