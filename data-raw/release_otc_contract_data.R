@@ -5,7 +5,7 @@ save <- rotc::otc_historical_contracts_all()
 
 save_dir <- tempdir()
 
-cli::cli_progress_step("Save Files in working directory {.path {save_dir}}...")
+cli::cli_alert_info("Save Files in working directory {.path {save_dir}}...")
 saveRDS(save, paste0(save_dir, "/otc_historical_contracts.rds"))
 readr::write_csv(save, paste0(save_dir, "/otc_historical_contracts.csv.gz"))
 arrow::write_parquet(save, paste0(save_dir, "/otc_historical_contracts.parquet"))
@@ -19,9 +19,11 @@ qs::qsave(save, paste0(save_dir, "/otc_historical_contracts.qs"),
 to_upload <- list.files(path = save_dir, full.names = TRUE)
 to_upload <- to_upload[stringr::str_detect(to_upload, "otc_historical")]
 
+cli::cli_ul("Will release {.path {to_upload}}")
+
 nflversedata::nflverse_upload(to_upload, "otc_contract_data")
 
-cli::cli_progress_step("Remove Temporary Directory")
+cli::cli_alert_info("Remove Temporary Directory")
 unlink(save_dir, recursive = TRUE)
 
 cli::cli_alert_success("DONE!")
