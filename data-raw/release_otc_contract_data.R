@@ -3,6 +3,7 @@
 
 save <- rotc::otc_historical_contracts_all()
 
+cli::cli_alert_info("Save Files in working directory {.path {getwd()}}...")
 saveRDS(save, "data-raw/to_upload/otc_historical_contracts.rds")
 readr::write_csv(save, "data-raw/to_upload/otc_historical_contracts.csv.gz")
 arrow::write_parquet(save, "data-raw/to_upload/otc_historical_contracts.parquet")

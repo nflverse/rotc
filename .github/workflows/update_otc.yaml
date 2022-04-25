@@ -25,5 +25,5 @@ jobs:
             local::.
             any::arrow
             any::qs
-      - name: Run ngs update script
+      - name: Run otc update script
         run: Rscript -e 'source("data-raw/release_otc_contract_data.R")'
