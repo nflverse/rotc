@@ -21,7 +21,7 @@ to_upload <- to_upload[stringr::str_detect(to_upload, "historical")]
 
 cli::cli_ul("Will release {.path {to_upload}}")
 
-nflversedata::nflverse_upload(to_upload, "contract_data")
+nflversedata::nflverse_upload(to_upload, "contracts")
 
 cli::cli_alert_info("Remove Temporary Directory")
 unlink(save_dir, recursive = TRUE)
