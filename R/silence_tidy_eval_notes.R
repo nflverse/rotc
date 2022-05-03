@@ -5,7 +5,12 @@ utils::globalVariables(
     "apy_cap_pct",
     "player",
     "team",
-    "is_active"
+    "is_active",
+    "entry",
+    "draft_year",
+    "draft_round",
+    "draft_overall",
+    "position"
   ),
   package = "rotc"
 )

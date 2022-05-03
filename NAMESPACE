@@ -2,4 +2,5 @@
 
 export(otc_historical_contracts)
 export(otc_historical_contracts_all)
+export(otc_player_details)
 import(dplyr)
