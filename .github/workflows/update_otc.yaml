@@ -21,6 +21,7 @@ jobs:
           cache-version: 1
           extra-packages: |
             nflverse/nflverse-data
+            nflverse/nflreadr
             ropensci/piggyback
             local::.
             any::arrow
