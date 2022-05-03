@@ -13,13 +13,13 @@ cli::cli_alert_info("Save Files in working directory {.path {save_dir}}...")
 try({
   saveRDS(save, file.path(save_dir, "historical_contracts.rds"))
   readr::write_csv(save, file.path(save_dir, "historical_contracts.csv.gz"))
-  arrow::write_parquet(save, file.path(save_dir, "historical_contracts.parquet"))
   qs::qsave(save, file.path(save_dir, "historical_contracts.qs"),
             preset = "custom",
             algorithm = "zstd_stream",
             compress_level = 22,
             shuffle_control = 15
   )
+  arrow::write_parquet(save, file.path(save_dir, "historical_contracts.parquet"))
 })
 
 to_upload <- list.files(path = save_dir, full.names = TRUE)
