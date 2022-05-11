@@ -4,7 +4,7 @@ on:
     - cron:  '0 4 * * SUN'
   workflow_dispatch:
 
-name: update_otc
+name: update otc player details
 
 jobs:
   update:
