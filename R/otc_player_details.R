@@ -15,6 +15,7 @@ otc_player_details <- function(player_url){
   # player_url <- "https://overthecap.com/player/brett-favre/6357/"
   # player_url <- "https://overthecap.com/player/donovan-mcnabb/6750/"
   # player_url <- "https://overthecap.com/player/kyle-spalding/9822/"
+  # player_url <- "https://overthecap.com/player/sergio-castillo/3664/"
 
   cli::cli_progress_step("Scrape {.url {player_url}}")
 
@@ -60,6 +61,7 @@ otc_player_details <- function(player_url){
 
   to_parse %>%
     xml2::xml_text() %>%
+    stringi::stri_remove_empty_na() %>%
     stringr::str_split(": ") %>%
     purrr::map_dfc(function(i){data.frame(out = i[[2]]) %>% rlang::set_names(i[[1]])}) %>%
     janitor::clean_names() %>%
