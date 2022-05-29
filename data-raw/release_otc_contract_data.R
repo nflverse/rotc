@@ -13,7 +13,8 @@ nflversedata::nflverse_save(
   data_frame = save,
   file_name = "historical_contracts",
   nflverse_type = "Historical Contract Data from OverTheCap.com",
-  release_tag = "contracts"
+  release_tag = "contracts",
+  file_types = c("rds","qs","parquet")
 )
 
 cli::cli_alert_success("DONE!")
