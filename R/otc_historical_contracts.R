@@ -31,7 +31,7 @@ otc_historical_contracts <- function(position = c("QB", "RB", "FB", "WR",
     dplyr::filter(stringr::str_detect(href, "/player/")) %>%
     dplyr::pull(href)
 
-  contratct_status <- xml2::xml_find_all(html_scrape, ".//tr[.//td]") %>%
+  contract_status <- xml2::xml_find_all(html_scrape, ".//tr[.//td]") %>%
     xml2::xml_attr("class")
 
   tbl <- rvest::html_table(html_scrape)[[1]] %>%
@@ -52,7 +52,8 @@ otc_historical_contracts <- function(position = c("QB", "RB", "FB", "WR",
       position = position,
       player_page = paste0("https://overthecap.com", hrefs),
       otc_id = as.integer(stringr::str_extract(hrefs, "[:digit:]+")),
-      is_active = contratct_status == "active"
+      is_active = contract_status == "active",
+      dplyr::across(c(value,apy,guaranteed,inflated_value,inflated_apy,inflated_guaranteed), ~.x/1e6)
     ) %>%
     dplyr::select(player, position, team, is_active, dplyr::everything()) %>%
     tidyr::replace_na(list(is_active = FALSE))
