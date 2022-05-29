@@ -6,7 +6,7 @@ player_details <- nflreadr::rds_from_url("https://github.com/nflverse/nflverse-d
 x <- player_details |>
   dplyr::select(player_url,season_history) |>
   tidyr::unnest(cols = season_history) |>
-  dplyr::mutate(across(matches("bonus|salary|number|cash"),~readr::parse_number(.x)/1e6),
+  dplyr::mutate(dplyr::across(dplyr::matches("bonus|salary|number|cash"),~readr::parse_number(.x)/1e6),
                 cap_percent = readr::parse_number(cap_percent,na = "--")/100) |>
   tidyr::nest(cols = -player_url)
 
