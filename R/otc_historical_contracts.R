@@ -46,6 +46,7 @@ otc_historical_contracts <- function(position = c("QB", "RB", "FB", "WR",
       ),
       .fns = readr::parse_number
     )) %>%
+    dplyr::na_if("") %>%
     dplyr::rename(apy_cap_pct = apy_as_percent_of_cap_at_signing) %>%
     dplyr::mutate(
       apy_cap_pct = apy_cap_pct / 100,
@@ -53,7 +54,9 @@ otc_historical_contracts <- function(position = c("QB", "RB", "FB", "WR",
       player_page = paste0("https://overthecap.com", hrefs),
       otc_id = as.integer(stringr::str_extract(hrefs, "[:digit:]+")),
       is_active = contract_status == "active",
-      dplyr::across(c(value,apy,guaranteed,inflated_value,inflated_apy,inflated_guaranteed), ~.x/1e6)
+      year_signed = as.integer(year_signed),
+      years = as.integer(years),
+      dplyr::across(c(value, apy, guaranteed, inflated_value, inflated_apy, inflated_guaranteed), ~.x/1e6)
     ) %>%
     dplyr::select(player, position, team, is_active, dplyr::everything()) %>%
     tidyr::replace_na(list(is_active = FALSE))
