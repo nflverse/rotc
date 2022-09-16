@@ -9,7 +9,7 @@ name: update_otc
 jobs:
   update:
     name: update data
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
