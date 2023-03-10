@@ -46,7 +46,10 @@ otc_historical_contracts <- function(position = c("QB", "RB", "FB", "WR",
       ),
       .fns = readr::parse_number
     )) %>%
-    dplyr::mutate_if(is.character, dplyr::na_if) %>%
+    dplyr::mutate_if(
+      .predicate = is.character,
+      .funs = ~ dplyr::na_if(.x, "")
+    ) %>%
     dplyr::rename(apy_cap_pct = apy_as_percent_of_cap_at_signing) %>%
     dplyr::mutate(
       apy_cap_pct = apy_cap_pct / 100,
