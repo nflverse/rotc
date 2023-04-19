@@ -1,6 +1,6 @@
 Package: rotc
 Title: Functions to Access OTC Data
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R: 
     person("Carl", "Sebastian", , "mrcaseb@gmail.com", role = c("aut", "cre"))
 Description: A set of functions to access over the cap data.
