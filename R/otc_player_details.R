@@ -16,6 +16,7 @@ otc_player_details <- function(player_url){
   # player_url <- "https://overthecap.com/player/donovan-mcnabb/6750/"
   # player_url <- "https://overthecap.com/player/kyle-spalding/9822/"
   # player_url <- "https://overthecap.com/player/sergio-castillo/3664/"
+  # player_url <- "https://overthecap.com/player/brock-purdy/10307/"
 
   cli::cli_progress_step("Scrape {.url {player_url}}")
 
@@ -75,7 +76,7 @@ otc_player_details <- function(player_url){
     dplyr::mutate(
       draft_year = stringr::str_extract(draft_year, "[:digit:]+") %>% as.integer(),
       draft_round = stringr::str_extract(draft_round, "[:digit:]+") %>% as.integer(),
-      draft_team = stringr::str_extract(entry, "(?<=\\()[:[:alpha:]:]+(?=\\))"),
+      draft_team = stringr::str_extract(entry, "(?<=\\()[:[:alnum:]:]+(?=\\))"),
       draft_overall = stringr::str_extract(draft_overall, "[:digit:]+") %>% as.integer(),
       season_history = list(season_history),
       player_url = player_url
