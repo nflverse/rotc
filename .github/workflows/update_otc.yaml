@@ -10,7 +10,7 @@ jobs:
   update:
     name: update data
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     env:
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
     steps:
