@@ -12,7 +12,7 @@ otc_player_ids <- function(endpoint = Sys.getenv("OTC_PLAYERID_ENDPOINT"),
   )
 
   resp <- httr2::request(endpoint) %>%
-    httr2::req_headers(Authorization = paste("Bearer", api_key)) %>%
+    httr2::req_auth_bearer_token(api_key) %>%
     httr2::req_retry(max_tries = 3) %>%
     httr2::req_perform()
 
