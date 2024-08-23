@@ -4,7 +4,7 @@ on:
     - cron:  '0 7 * * *'
   workflow_dispatch:
 
-name: update_otc
+name: Update OTC Contract Data
 
 jobs:
   update:
