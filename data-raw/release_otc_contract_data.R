@@ -3,6 +3,10 @@
 
 player_details <- nflreadr::rds_from_url("https://github.com/nflverse/nflverse-data/releases/download/contracts/otc_player_details.rds")
 
+# Load OTC Player ID data and join gsis_ids
+player_ids <- nflreadr::rds_from_url("https://github.com/nflverse/nflverse-data/releases/download/players_components/otc_players.rds")
+id_map <- player_ids$gsis_id |> rlang::set_names(player_ids$otc_id)
+
 x <- player_details |>
   dplyr::select(player_url,season_history) |>
   tidyr::unnest(cols = season_history) |>
@@ -15,10 +19,9 @@ player_details <- player_details |>
   dplyr::left_join(x, by = "player_url")
 
 contracts <- rotc::otc_historical_contracts_all()
+contracts$gsis_id <- id_map[as.character(contracts$otc_id)]
 
 save <- dplyr::left_join(contracts, player_details, by = c("player_page" = "player_url"))
-
-options(piggyback.verbose = FALSE)
 
 nflversedata::nflverse_save(
   data_frame = save,
