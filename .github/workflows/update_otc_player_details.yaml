@@ -9,7 +9,7 @@ name: Update OTC Player Details
 jobs:
   update:
     name: update player details
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     # timeout-minutes: 20
     env:
       GITHUB_PAT: ${{ secrets.NFLVERSE_GH_TOKEN }}
