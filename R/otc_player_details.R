@@ -9,7 +9,7 @@
 #' \donttest{
 #'   otc_player_details("https://overthecap.com/player/aaron-rodgers/1085/")
 #' }
-otc_player_details <- function(player_url){
+otc_player_details <- function(player_url) {
   # for tests
   # player_url <- "https://overthecap.com/player/aaron-rodgers/1085/"
   # player_url <- "https://overthecap.com/player/brett-favre/6357/"
@@ -17,6 +17,7 @@ otc_player_details <- function(player_url){
   # player_url <- "https://overthecap.com/player/kyle-spalding/9822/"
   # player_url <- "https://overthecap.com/player/sergio-castillo/3664/"
   # player_url <- "https://overthecap.com/player/brock-purdy/10307/"
+  # player_url <- "https://overthecap.com/player/jared-goff/4714"
 
   cli::cli_progress_step("Scrape {.url {player_url}}")
 
@@ -26,33 +27,46 @@ otc_player_details <- function(player_url){
     httr2::resp_body_html()
 
   season_history <-
-    xml2::xml_find_all(html_scrape, ".//*[@class = 'contract salary-cap-history player-new']") %>%
+    xml2::xml_find_all(
+      html_scrape,
+      ".//*[@class = 'contract salary-cap-history player-new']"
+    ) %>%
     rvest::html_table() %>%
-    purrr::pluck(1)
+    purrr::pluck(1) %>%
+    otc_clean_history()
 
-  # catch missing season history
-  if (!is.null(season_history)){
-    season_history <- season_history %>%
-      janitor::remove_empty("cols") %>%
-      janitor::clean_names()
-  }
+  contract_history <-
+    xml2::xml_find_all(
+      html_scrape,
+      ".//h4[text()='Contract History']/following-sibling::table"
+    ) %>%
+    rvest::html_table() %>%
+    purrr::pluck(1) %>%
+    otc_clean_history()
 
   # Entry info of active players
-  entry_info <- xml2::xml_find_all(html_scrape, ".//*[@class = 'league-entry-info']") %>%
+  entry_info <- xml2::xml_find_all(
+    html_scrape,
+    ".//*[@class = 'league-entry-info']"
+  ) %>%
     xml2::xml_contents()
 
   # Entry info of non-active players
-  player_bio <- xml2::xml_find_all(html_scrape, ".//*[@class = 'player-bio inactive-fg']") %>%
+  player_bio <- xml2::xml_find_all(
+    html_scrape,
+    ".//*[@class = 'player-bio inactive-fg']"
+  ) %>%
     xml2::xml_contents()
 
   # decide which entry info to parse
   # if both are missing, just return season history and player url
-  if (length(entry_info) != 0){
+  if (length(entry_info) != 0) {
     to_parse <- entry_info
-  } else if (length(player_bio) == 0 || all(xml2::xml_text(player_bio) == "")){
+  } else if (length(player_bio) == 0 || all(xml2::xml_text(player_bio) == "")) {
     return(
       data.frame(
         season_history = list(season_history),
+        contract_history = list(contract_history),
         player_url = player_url
       )
     )
@@ -64,7 +78,9 @@ otc_player_details <- function(player_url){
     xml2::xml_text() %>%
     stringi::stri_remove_empty_na() %>%
     stringr::str_split(": ") %>%
-    purrr::map_dfc(function(i){data.frame(out = i[[2]]) %>% rlang::set_names(i[[1]])}) %>%
+    purrr::map_dfc(function(i) {
+      data.frame(out = i[[2]]) %>% rlang::set_names(i[[1]])
+    }) %>%
     janitor::clean_names() %>%
     tidyr::separate(
       entry,
@@ -74,13 +90,25 @@ otc_player_details <- function(player_url){
       remove = FALSE
     ) %>%
     dplyr::mutate(
-      draft_year = stringr::str_extract(draft_year, "[:digit:]+") %>% as.integer(),
-      draft_round = stringr::str_extract(draft_round, "[:digit:]+") %>% as.integer(),
+      draft_year = stringr::str_extract(draft_year, "[:digit:]+") %>%
+        as.integer(),
+      draft_round = stringr::str_extract(draft_round, "[:digit:]+") %>%
+        as.integer(),
       draft_team = stringr::str_extract(entry, "(?<=\\()[:[:alnum:]:]+(?=\\))"),
-      draft_overall = stringr::str_extract(draft_overall, "[:digit:]+") %>% as.integer(),
+      draft_overall = stringr::str_extract(draft_overall, "[:digit:]+") %>%
+        as.integer(),
       season_history = list(season_history),
+      contract_history = list(contract_history),
       player_url = player_url
     ) %>%
     dplyr::select(-entry)
+}
 
+otc_clean_history <- function(df) {
+  if (is.null(df)) {
+    return(df)
+  }
+  df %>%
+    janitor::remove_empty("cols") %>%
+    janitor::clean_names()
 }
