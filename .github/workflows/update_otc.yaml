@@ -23,7 +23,5 @@ jobs:
             nflverse/nflverse-data
             nflverse/nflreadr
             local::.
-            any::arrow
-            qsbase/qs
       - name: Run otc update script
         run: Rscript -e 'source("data-raw/release_otc_contract_data.R")'

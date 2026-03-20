@@ -28,7 +28,7 @@ nflversedata::nflverse_save(
   file_name = "historical_contracts",
   nflverse_type = "Historical Contract Data from OverTheCap.com",
   release_tag = "contracts",
-  file_types = c("rds","qs","parquet")
+  file_types = c("rds", "parquet")
 )
 
 cli::cli_alert_success("DONE!")
