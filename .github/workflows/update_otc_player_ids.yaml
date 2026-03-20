@@ -25,7 +25,5 @@ jobs:
             nflverse/nflverse-data
             nflverse/nflreadr
             local::.
-            any::arrow
-            any::qs
       - name: Run otc update script
         run: Rscript data-raw/release_otc_player_ids.R
