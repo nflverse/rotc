@@ -18,6 +18,7 @@ otc_player_details <- function(player_url) {
   # player_url <- "https://overthecap.com/player/sergio-castillo/3664/"
   # player_url <- "https://overthecap.com/player/brock-purdy/10307/"
   # player_url <- "https://overthecap.com/player/jared-goff/4714"
+  # player_url <- "https://overthecap.com/player/matt-szymanski/2933/"
 
   cli::cli_progress_step("Scrape {.url {player_url}}")
 
@@ -44,6 +45,11 @@ otc_player_details <- function(player_url) {
     purrr::pluck(1) %>%
     otc_clean_history()
 
+  if (all(is.null(season_history), is.null(contract_history))) {
+    cli::cli_alert_info("No relevant data for {.url {player_url}}")
+    return(tibble::tibble())
+  }
+
   # Entry info of active players
   entry_info <- xml2::xml_find_all(
     html_scrape,
@@ -59,12 +65,12 @@ otc_player_details <- function(player_url) {
     xml2::xml_contents()
 
   # decide which entry info to parse
-  # if both are missing, just return season history and player url
+  # if both are missing, just return season history, contract history and player url
   if (length(entry_info) != 0) {
     to_parse <- entry_info
   } else if (length(player_bio) == 0 || all(xml2::xml_text(player_bio) == "")) {
     return(
-      data.frame(
+      tibble::tibble(
         season_history = list(season_history),
         contract_history = list(contract_history),
         player_url = player_url
@@ -82,13 +88,7 @@ otc_player_details <- function(player_url) {
       data.frame(out = i[[2]]) %>% rlang::set_names(i[[1]])
     }) %>%
     janitor::clean_names() %>%
-    tidyr::separate(
-      entry,
-      into = c("draft_year", "draft_round", "draft_overall"),
-      sep = ", ",
-      fill = "right",
-      remove = FALSE
-    ) %>%
+    otc_parse_entry() %>%
     dplyr::mutate(
       draft_year = stringr::str_extract(draft_year, "[:digit:]+") %>%
         as.integer(),
@@ -107,8 +107,31 @@ otc_player_details <- function(player_url) {
 otc_clean_history <- function(df) {
   if (is.null(df)) {
     return(df)
+  } else if (nrow(df) == 0L) {
+    return(NULL)
   }
   df %>%
     janitor::remove_empty("cols") %>%
     janitor::clean_names()
+}
+
+otc_parse_entry <- function(df) {
+  if ("entry" %in% colnames(df)) {
+    tidyr::separate(
+      df,
+      entry,
+      into = c("draft_year", "draft_round", "draft_overall"),
+      sep = ", ",
+      fill = "right",
+      remove = FALSE
+    )
+  } else {
+    dplyr::mutate(
+      df,
+      draft_year= NA_integer_,
+      draft_round= NA_integer_,
+      draft_overall= NA_integer_,
+      entry = NA_character_
+    )
+  }
 }
