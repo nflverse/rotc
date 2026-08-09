@@ -22,27 +22,27 @@ otc_player_details <- function(player_url) {
 
   cli::cli_progress_step("Scrape {.url {player_url}}")
 
-  html_scrape <- httr2::request(player_url) %>%
-    httr2::req_retry(max_tries = 5) %>%
-    httr2::req_perform() %>%
+  html_scrape <- httr2::request(player_url) |>
+    httr2::req_retry(max_tries = 5) |>
+    httr2::req_perform() |>
     httr2::resp_body_html()
 
   season_history <-
     xml2::xml_find_all(
       html_scrape,
       ".//*[@class = 'contract salary-cap-history player-new']"
-    ) %>%
-    rvest::html_table() %>%
-    purrr::pluck(1) %>%
+    ) |>
+    rvest::html_table() |>
+    purrr::pluck(1) |>
     otc_clean_history()
 
   contract_history <-
     xml2::xml_find_all(
       html_scrape,
       ".//h4[text()='Contract History']/following-sibling::table"
-    ) %>%
-    rvest::html_table() %>%
-    purrr::pluck(1) %>%
+    ) |>
+    rvest::html_table() |>
+    purrr::pluck(1) |>
     otc_clean_history()
 
   if (all(is.null(season_history), is.null(contract_history))) {
@@ -54,14 +54,14 @@ otc_player_details <- function(player_url) {
   entry_info <- xml2::xml_find_all(
     html_scrape,
     ".//*[@class = 'league-entry-info']"
-  ) %>%
+  ) |>
     xml2::xml_contents()
 
   # Entry info of non-active players
   player_bio <- xml2::xml_find_all(
     html_scrape,
     ".//*[@class = 'player-bio inactive-fg']"
-  ) %>%
+  ) |>
     xml2::xml_contents()
 
   # decide which entry info to parse
@@ -80,27 +80,27 @@ otc_player_details <- function(player_url) {
     to_parse <- player_bio
   }
 
-  to_parse %>%
-    xml2::xml_text() %>%
-    stringi::stri_remove_empty_na() %>%
-    stringr::str_split(": ") %>%
+  to_parse |>
+    xml2::xml_text() |>
+    stringi::stri_remove_empty_na() |>
+    stringr::str_split(": ") |>
     purrr::map_dfc(function(i) {
-      data.frame(out = i[[2]]) %>% rlang::set_names(i[[1]])
-    }) %>%
-    janitor::clean_names() %>%
-    otc_parse_entry() %>%
+      data.frame(out = i[[2]]) |> rlang::set_names(i[[1]])
+    }) |>
+    janitor::clean_names() |>
+    otc_parse_entry() |>
     dplyr::mutate(
-      draft_year = stringr::str_extract(draft_year, "[:digit:]+") %>%
+      draft_year = stringr::str_extract(draft_year, "[:digit:]+") |>
         as.integer(),
-      draft_round = stringr::str_extract(draft_round, "[:digit:]+") %>%
+      draft_round = stringr::str_extract(draft_round, "[:digit:]+") |>
         as.integer(),
       draft_team = stringr::str_extract(entry, "(?<=\\()[:[:alnum:]:]+(?=\\))"),
-      draft_overall = stringr::str_extract(draft_overall, "[:digit:]+") %>%
+      draft_overall = stringr::str_extract(draft_overall, "[:digit:]+") |>
         as.integer(),
       season_history = list(season_history),
       contract_history = list(contract_history),
       player_url = player_url
-    ) %>%
+    ) |>
     dplyr::select(-entry)
 }
 
@@ -110,8 +110,8 @@ otc_clean_history <- function(df) {
   } else if (nrow(df) == 0L) {
     return(NULL)
   }
-  df %>%
-    janitor::remove_empty("cols") %>%
+  df |>
+    janitor::remove_empty("cols") |>
     janitor::clean_names()
 }
 
