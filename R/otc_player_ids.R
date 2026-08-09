@@ -11,15 +11,15 @@ otc_player_ids <- function(endpoint = Sys.getenv("OTC_PLAYERID_ENDPOINT"),
     length(api_key) == 1 && nchar(api_key) > 0
   )
 
-  resp <- httr2::request(endpoint) %>%
-    httr2::req_auth_bearer_token(api_key) %>%
-    httr2::req_retry(max_tries = 3) %>%
+  resp <- httr2::request(endpoint) |>
+    httr2::req_auth_bearer_token(api_key) |>
+    httr2::req_retry(max_tries = 3) |>
     httr2::req_perform()
 
-  player_ids <- resp %>%
-    httr2::resp_body_string() %>%
-    jsonlite::fromJSON() %>%
-    dplyr::mutate_all( ~replace(.x, .x %in% c("", 0), NA)) %>%
+  player_ids <- resp |>
+    httr2::resp_body_string() |>
+    jsonlite::fromJSON() |>
+    dplyr::mutate_all( ~replace(.x, .x %in% c("", 0), NA)) |>
     dplyr::rename(
       gsis_it_id = gsis_id,
       gsis_id = gsis_player_id
