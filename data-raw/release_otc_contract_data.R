@@ -21,6 +21,24 @@ player_details_parsed <- player_details |>
     keep_empty = TRUE,
     names_sep = "_"
   ) |>
+  dplyr::mutate(
+    # parse columns that include a $ sign for arrow compatibility
+    dplyr::across(
+      dplyr::where(~ any(stringr::str_detect(.x, "\\$"), na.rm = TRUE)) &
+        dplyr::starts_with("season_history"),
+      ~ readr::parse_number(.x) / 1e6
+    ),
+    # parse columns that include a % sign for arrow compatibility
+    dplyr::across(
+      dplyr::where(~ any(stringr::str_detect(.x, "\\%"), na.rm = TRUE)) &
+        dplyr::starts_with("season_history"),
+      ~ readr::parse_number(.x, na = "--") / 100
+    )
+  ) |>
+  tidyr::nest(
+    season_history = dplyr::starts_with("season_history"),
+    .names_sep = "_"
+  ) |>
   tidyr::unnest(
     contract_history,
     keep_empty = TRUE,
@@ -29,17 +47,18 @@ player_details_parsed <- player_details |>
   dplyr::mutate(
     # parse columns that include a $ sign for arrow compatibility
     dplyr::across(
-      dplyr::where(~ any(stringr::str_detect(.x, "\\$"), na.rm = TRUE)),
+      dplyr::where(~ any(stringr::str_detect(.x, "\\$"), na.rm = TRUE)) &
+        dplyr::starts_with("contract_history"),
       ~ readr::parse_number(.x) / 1e6
     ),
     # parse columns that include a % sign for arrow compatibility
     dplyr::across(
-      dplyr::where(~ any(stringr::str_detect(.x, "\\%"), na.rm = TRUE)),
+      dplyr::where(~ any(stringr::str_detect(.x, "\\%"), na.rm = TRUE)) &
+        dplyr::starts_with("contract_history"),
       ~ readr::parse_number(.x, na = "--") / 100
     )
   ) |>
   tidyr::nest(
-    season_history = dplyr::starts_with("season_history"),
     contract_history = dplyr::starts_with("contract_history"),
     .names_sep = "_"
   ) |>
